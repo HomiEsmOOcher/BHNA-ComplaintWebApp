@@ -1,0 +1,354 @@
+/* Payment Page */
+.Payment {
+    max-width: 400px;
+    width: 90%;
+    margin: auto; /* Center horizontally */
+    padding: 20px;
+    background-color: #f8f9fa;
+    border-radius: 10px;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%); /* Center both horizontally & vertically */
+  }
+  
+  h1 {
+    font-size: 24px;
+    color: #333;
+    margin-bottom: 20px;
+  }
+  
+  .upi, .Bank\ Transfer, .QR\ Code {
+    margin-bottom: 20px;
+    padding: 15px;
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  
+  label {
+    display: block;
+    font-size: 16px;
+    font-weight: bold;
+    margin-bottom: 8px;
+    color: #555;
+  }
+  
+  /* Smaller input boxes */
+  input {
+    width: 90%;
+    padding: 6px;
+    margin-bottom: 8px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 14px;
+    height: 35px;
+  }
+  
+  /* Reduced button width */
+  .btnPrimary, #QR-code {
+    width: 80%;
+    max-width: 200px;
+    padding: 8px;
+    background-color: #28a745;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+    display: block;
+    margin: 0 auto;
+  }
+  
+  .btnPrimary:hover, #QR-code:hover {
+    background-color: #218838;
+  }
+  
+  /* Centered QR code with equal margins */
+  .qr-code-image {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 90%;
+    height: 100px; /* Set a fixed height */
+    padding: 10px; /* Equal padding on all sides */
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+    margin-top: 10px;
+  }
+  
+  .qr-code-image img {
+    width: 80%;
+    max-width: 150px; /* Keep it well-sized */
+    height: auto;
+    border-radius: 10px;
+    border: 2px solid #ccc;
+  }
+  
+  body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: #f4f4f4;
+  }
+  
+  .container {
+    width: 90%;
+    max-width: 1200px;
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    overflow-y: auto;
+  }
+  
+  .content {
+    text-align: center;
+  }
+  
+  .input {
+    width: 50%;
+    padding: 10px;
+    margin: 10px 0;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+  }
+  
+  .button {
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin: 10px;
+  }
+  
+  .button:disabled {
+    background-color: #cccccc;
+    cursor: not-allowed;
+  }
+  
+  .displayContent {
+    margin-top: 20px;
+  }
+  
+  .displayTable {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  
+  .displayRow {
+    width: 30%;
+    min-width: 250px;
+    margin: 5px;
+    padding: 10px;
+    background: #f9f9f9;
+    border-radius: 5px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .displayCellHeader {
+    font-weight: bold;
+    color: #333;
+  }
+  
+  .displayCell {
+    color: #555;
+  }
+  
+  .statusButton {
+    padding: 8px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+  .active {
+    background-color: #28a745;
+    color: white;
+  }
+  
+  .inactive {
+    background-color: #dc3545;
+    color: white;
+  }
+
+
+
+/* Survey Data Page */
+.survey-data-container {
+    width: 90%;
+    max-width: 1200px;
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    overflow-y: auto;
+    margin: 20px auto;
+  }
+  
+  .survey-data-content {
+    text-align: center;
+  }
+  
+  .survey-data-input {
+    width: 50%;
+    padding: 10px;
+    margin: 10px 0;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+  }
+  
+  .survey-data-button {
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin: 10px;
+  }
+  
+  .survey-data-button:disabled {
+    background-color: #cccccc;
+    cursor: not-allowed;
+  }
+  
+  .survey-data-displayContent {
+    margin-top: 20px;
+  }
+  
+  .survey-data-displayTable {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+  }
+  
+  .survey-data-displayRow {
+    background: #f9f9f9;
+    border-radius: 5px;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .survey-data-displayCellHeader {
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 5px;
+  }
+  
+  .survey-data-displayCell {
+    color: #555;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: #fff;
+  }
+  
+  .survey-data-statusButton {
+    padding: 8px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+  .survey-data-active {
+    background-color: #28a745;
+    color: white;
+  }
+  
+  .survey-data-inactive {
+    background-color: #dc3545;
+    color: white;
+  }
+ 
+  /* User Survey Details Page */
+.user-survey-container {
+    width: 90%;
+    max-width: 1200px;
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    overflow-y: auto;
+    margin: 20px auto;
+  }
+  
+  .user-survey-content {
+    text-align: center;
+  }
+  
+  .user-survey-input {
+    width: 50%;
+    padding: 10px;
+    margin: 10px 0;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+  }
+  
+  .user-survey-button {
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin: 10px;
+  }
+  
+  .user-survey-button:disabled {
+    background-color: #cccccc;
+    cursor: not-allowed;
+  }
+  
+  .user-survey-displayContent {
+    margin-top: 20px;
+  }
+  
+  .user-survey-displayTable {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+  }
+  
+  .user-survey-displayRow {
+    background: #f9f9f9;
+    border-radius: 5px;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .user-survey-displayCellHeader {
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 5px;
+  }
+  
+  .user-survey-displayCell {
+    color: #555;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: #fff;
+  }
+  
+  .user-survey-no-data {
+    text-align: center;
+    padding: 20px;
+    font-size: 18px;
+    color: #777;
+  }
