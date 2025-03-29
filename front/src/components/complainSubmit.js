@@ -19,8 +19,9 @@ const ComplainSubmit = () => {
     photo: null,
   });
 
-  const [loading, setLoading] = useState(false); // Added loading state
-  const [error, setError] = useState(''); // Added error state for user feedback
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+  const [complaintRegistrationNo, setComplaintRegistrationNo] = useState('');
 
   useEffect(() => {
     if (authData) {
@@ -46,38 +47,43 @@ const ComplainSubmit = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    // Reset error state
     setError('');
+    setComplaintRegistrationNo('');
 
-    // Validate form data
+    // Validation
     if (!formData.complaintType || !formData.description) {
       setError('Please fill in all required fields.');
       return;
     }
 
-    // Optional: Validate file uploads if they are required
-    // if (!formData.document || !formData.photo) {
-    //   setError('Please upload both a document and a photo.');
-    //   return;
-    // }
+    if (!authData?.user?.userID) {
+      setError('User authentication is required.');
+      return;
+    }
 
     setLoading(true);
 
     try {
-      console.log('Submit button clicked');
-      console.log('Calling submitComplaint API...');
+      // Safely convert locality to string and remove spaces
+      const localityRaw = authData.user.locality ?? ''; // Use nullish coalescing
+      const localityValue = String(localityRaw).replace(/\s+/g, '');
+      
+      if (!localityValue) {
+        setError('Locality is required.');
+        setLoading(false);
+        return;
+      }
 
       const submitComplaint = {
         colony: authData.user.colony || '',
         complaintStatus: 'Open',
         complaintType: formData.complaintType,
-        createdBy: authData.user.username || 'user',
+        createdBy: authData.user.username || 'Anonymous',
         createdDate: new Date().toISOString(),
         description: formData.description,
-        ipAddress: authData.user.ipAddress || '',
-        isAdmin: authData.user.isAdmin || false,
-        locality: authData.user.locality || '',
+        ipAddress: authData.user.ipAddress || '0.0.0.0',
+        isAdmin: authData.user.isAdmin ?? false,
+        locality: localityValue,
         localityID: authData.user.localityID || 1,
         location: formData.geoLocation,
         mobileNumber: formData.mobile,
@@ -86,36 +92,28 @@ const ComplainSubmit = () => {
         zoneID: authData.user.zoneID || 1,
       };
 
-      console.log('Data being sent to API:', JSON.stringify(submitComplaint));
-
       const complaintResponse = await axios.post(
         'https://babralaapi-d3fpaphrckejgdd5.centralindia-01.azurewebsites.net/auth/complaints',
         submitComplaint,
         {
           headers: {
             'Content-Type': 'application/json',
+            'Authorization': `Bearer ${authData?.token}`,
           },
         }
       );
 
-      console.log('Complaint API response:', complaintResponse.data);
-
       if (complaintResponse.data.success) {
-        const complaintID = complaintResponse.data.complaintID;
+        const { complaintID, complaintRegistrationNo } = complaintResponse.data;
+        setComplaintRegistrationNo(complaintRegistrationNo);
 
-        // Only proceed with file upload if files are selected
+        // Handle file uploads if present
         if (formData.document || formData.photo) {
           const submitFiles = new FormData();
-          if (formData.document) {
-            submitFiles.append('attachmentDoc', formData.document);
-          }
-          if (formData.photo) {
-            submitFiles.append('userImage', formData.photo);
-          }
+          if (formData.document) submitFiles.append('attachmentDoc', formData.document);
+          if (formData.photo) submitFiles.append('userImage', formData.photo);
           submitFiles.append('userID', formData.userId);
           submitFiles.append('complaintID', complaintID);
-
-          console.log('Calling submitFiles API...');
 
           const fileUploadResponse = await axios.post(
             'https://babralaapi-d3fpaphrckejgdd5.centralindia-01.azurewebsites.net/auth/submitFiles',
@@ -123,34 +121,35 @@ const ComplainSubmit = () => {
             {
               headers: {
                 'Content-Type': 'multipart/form-data',
+                'Authorization': `Bearer ${authData?.token}`,
               },
             }
           );
 
-          console.log('Files API response:', fileUploadResponse.data);
-
           if (!fileUploadResponse.data.success) {
-            setError('Failed to upload files: ' + (fileUploadResponse.data.message || 'Unknown error'));
+            setError('Complaint submitted but file upload failed: ' + 
+              (fileUploadResponse.data.message || 'Unknown error'));
             setLoading(false);
             return;
           }
         }
 
-        // Show success message and navigate
-        alert('Complaint Submitted Successfully');
-        navigate('/Home', { state: { userId: formData.userId } });
+        alert(`Complaint Submitted Successfully! Registration No: ${complaintRegistrationNo}`);
+        navigate('/Home', { 
+          state: { 
+            userId: formData.userId,
+            complaintRegistrationNo 
+          } 
+        });
       } else {
-        setError('Failed to submit complaint: ' + (complaintResponse.data.message || 'Unknown error'));
+        setError('Failed to submit complaint: ' + 
+          (complaintResponse.data.message || 'Unknown error'));
       }
     } catch (error) {
-      console.error('Error during complaint submission:', error);
-      if (error.response) {
-        setError(`Error: ${error.response.data.message || 'Failed to submit complaint'}`);
-      } else if (error.request) {
-        setError('Error: No response from server. Please check your network connection.');
-      } else {
-        setError('Error: ' + error.message);
-      }
+      console.error('Submission error:', error);
+      setError(error.response?.data?.message || 
+              error.request ? 'Network Error: No server response' : 
+              error.message || 'Unexpected error occurred');
     } finally {
       setLoading(false);
     }
@@ -161,6 +160,11 @@ const ComplainSubmit = () => {
       <div className="submit-form">
         <h1>Submit Complaint</h1>
         {error && <div className="error-message">{error}</div>}
+        {complaintRegistrationNo && (
+          <div className="success-message">
+            Complaint Registration No: {complaintRegistrationNo}
+          </div>
+        )}
         <form onSubmit={handleSubmit}>
           <div className="submit-group">
             <label>Complaint Type</label>
@@ -182,41 +186,83 @@ const ComplainSubmit = () => {
               value={formData.description}
               onChange={handleChange}
               required
-            ></textarea>
+            />
           </div>
 
           <div className="submit-group">
             <label>User ID</label>
-            <input type="text" name="userId" placeholder="Enter User ID" value={formData.userId} onChange={handleChange} readOnly required />
+            <input 
+              type="text" 
+              name="userId" 
+              value={formData.userId} 
+              onChange={handleChange} 
+              readOnly 
+              required 
+            />
           </div>
 
           <div className="submit-group">
             <label>Mobile Number</label>
-            <input type="text" name="mobile" placeholder="Enter Mobile Number" value={formData.mobile} onChange={handleChange} readOnly required />
+            <input 
+              type="text" 
+              name="mobile" 
+              value={formData.mobile} 
+              onChange={handleChange} 
+              readOnly 
+              required 
+            />
           </div>
 
           <div className="submit-group">
             <label>Email</label>
-            <input type="email" name="email" placeholder="Enter Email" value={formData.email} onChange={handleChange} readOnly required />
+            <input 
+              type="email" 
+              name="email" 
+              value={formData.email} 
+              onChange={handleChange} 
+              readOnly 
+              required 
+            />
           </div>
 
           <div className="submit-group">
             <label>Location</label>
-            <input type="text" name="Location" placeholder="Enter Location" value={formData.geoLocation} onChange={handleChange} readOnly required />
+            <input 
+              type="text" 
+              name="geoLocation" 
+              value={formData.geoLocation} 
+              onChange={handleChange} 
+              readOnly 
+              required 
+            />
             <button type="button" className="refresh-btn">Refresh Location</button>
           </div>
 
           <div className="submit-group">
             <label>Upload Document</label>
-            <input type="file" name="document" accept=".pdf,.doc,.docx" onChange={handleFileChange} />
+            <input 
+              type="file" 
+              name="document" 
+              accept=".pdf,.doc,.docx" 
+              onChange={handleFileChange} 
+            />
           </div>
 
           <div className="submit-group">
             <label>Upload Photo</label>
-            <input type="file" name="photo" accept="image/*" onChange={handleFileChange} />
+            <input 
+              type="file" 
+              name="photo" 
+              accept="image/*" 
+              onChange={handleFileChange} 
+            />
           </div>
 
-          <button type="submit" className="submit-btn" disabled={loading}>
+          <button 
+            type="submit" 
+            className="submit-btn" 
+            disabled={loading}
+          >
             {loading ? 'Submitting...' : 'Submit Complaint'}
           </button>
         </form>

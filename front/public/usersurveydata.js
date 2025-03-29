@@ -2,6 +2,13 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import '../App.css';
 
+const maskAadhaarNumber = (aadhaarNumber) => {
+  if (!aadhaarNumber || aadhaarNumber.length < 4) {
+    return 'Invalid Aadhaar';
+  }
+  return aadhaarNumber.slice(0, aadhaarNumber.length - 4).replace(/\d/g, '*') + aadhaarNumber.slice(-4);
+};
+
 const UserSurveyDetails = () => {
   const [mobileNumber, setMobileNumber] = useState('');
   const [data, setData] = useState([]);

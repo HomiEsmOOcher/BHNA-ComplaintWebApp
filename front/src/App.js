@@ -12,7 +12,6 @@ import UsersList from './components/userSurveyDetails';
 import SurveyData from './components/surveyData';
 
 
-
 const App = () => {
   return (
     <AuthProvider>
